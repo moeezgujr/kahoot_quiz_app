@@ -1,0 +1,73 @@
+/* quizcreator.css */
+.container {
+    text-align: center;
+    font-family: 'Raleway', sans-serif;
+    padding: 20px;
+    border-radius: 10px;
+    /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .question-field {
+    border: 2px solid #ccc;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .question {
+    width: 75%;
+    padding: 10px;
+    font-family: 'Raleway', sans-serif;
+    margin-bottom: 10px;
+    border-radius: 10px;
+
+  }
+  
+  .correct {
+    width: 50px;
+    text-align: center;
+    font-family: 'Raleway', sans-serif;
+  }
+  .answer_input{
+    margin-right: 10px;
+    margin-bottom: 10px;
+    width: 200px;
+    height: 50px;
+    border-radius: 10px;
+  }
+  
+  #title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  #quizTitle {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    border-radius: 10px;
+    height: 50px;
+  }
+  
+  button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .width-100{
+    width: 50%;
+  }
+  button:hover {
+    background-color: #0056b3;
+  }
+  

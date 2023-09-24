@@ -49,6 +49,7 @@ socketIO.on("connection", (socket) => {
   });
   socket.on("submitToServer", async (data) => {
     const player = await KahootPlayer.find({ nickname: data.nickname });
+    const responses = data?.responses.map((item) => item.isCorrect);
     if (player[0].stats) {
       console.log("stas", data, JSON.parse(player[0].stats));
       let statsData = JSON.parse(player[0].stats).filter(
@@ -58,7 +59,7 @@ socketIO.on("connection", (socket) => {
         //        let index=statsData[0
         statsData = [
           ...JSON.parse(player[0].stats),
-          { gameId: data.id, correct: data.isCorrect, pin: data.pin },
+          { gameId: data.id, correct: responses, pin: data.pin },
         ];
         const update = KahootPlayer.findByIdAndUpdate(player[0]._id, {
           stats: JSON.stringify(statsData),
@@ -72,7 +73,7 @@ socketIO.on("connection", (socket) => {
     } else {
       const update = KahootPlayer.findByIdAndUpdate(player[0]._id, {
         stats: JSON.stringify([
-          { gameId: data.id, correct: data.isCorrect, pin: data.pin },
+          { gameId: data.id, correct: responses, pin: data.pin },
         ]),
       });
       update.then((res) => {

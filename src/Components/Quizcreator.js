@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "../Styles/quizcreator.css"; // Import the CSS file
 import { useHistory } from "react-router-dom";
+import { toast } from "react-toastify"; // Import the toast library
 
 function QuizCreator({ socket }) {
   // Define state to manage form data and the list of questions
@@ -10,10 +11,12 @@ function QuizCreator({ socket }) {
       {
         questionText: "",
         answers: ["", "", "", ""],
-        correctAnswer: 1, // Default to the first answer as correct
+        correctAnswer: 1,
       },
     ],
   });
+
+  const history = useHistory();
 
   // Function to handle changes in form inputs
   const handleInputChange = (e) => {
@@ -78,21 +81,58 @@ function QuizCreator({ socket }) {
       ],
     }));
   };
-  const history = useHistory();
+
+  // ... (previous code)
+
+  // Function to validate form inputs
+  const validateForm = () => {
+    if (quizData.quizTitle.trim() === "") {
+      toast.error("Quiz Title cannot be empty");
+      return false;
+    }
+
+    for (const question of quizData.questions) {
+      if (question.questionText.trim() === "") {
+        toast.error("Question Text cannot be empty");
+        return false;
+      }
+
+      // Check for duplicate answers within a question
+      const uniqueAnswers = new Set(
+        question.answers.map((answer) => answer.trim())
+      );
+      if (uniqueAnswers.size !== question.answers.length) {
+        toast.error("Duplicate answers found within a question");
+        return false;
+      }
+
+      for (const answer of question.answers) {
+        if (answer.trim() === "") {
+          toast.error("Answer cannot be empty");
+          return false;
+        }
+      }
+    }
+
+    return true;
+  };
+
+  // ... (rest of the code)
 
   // Function to update the database with the quiz
   const updateDatabase = () => {
-    const gamePin = Math.floor(Math.random() * 90000) + 10000;
-    const newQuiz = {};
-    // Implement the logic to update the database here
-    socket.emit("newQuiz", { quizData, gamePin });
-    socket.emit("showGamePin", gamePin);
-    history.push("/host");
+    if (validateForm()) {
+      const gamePin = Math.floor(Math.random() * 90000) + 10000;
+      // Implement the logic to update the database here
+      socket.emit("newQuiz", { quizData, gamePin });
+      socket.emit("showGamePin", gamePin);
+      history.push("/host");
+    }
   };
+
   // Function to cancel and return to the quiz selection
   const cancelQuiz = () => {
     history.push("/");
-    // Implement the logic to cancel the quiz and return here
     console.log("Quiz creation canceled");
   };
 
@@ -152,28 +192,24 @@ function QuizCreator({ socket }) {
               value={question.correctAnswer}
               onChange={(e) => handleInputChangeForCorrectAnswer(e, index)}
             />
+            <br />
           </div>
         ))}
       </div>
       <br />
-      <button className="width-100" onClick={addQuestion}>
-        Add another question
-      </button>
-
-      <br />
-      <br />
-
-      <div>
-        <button className="width-100" onClick={updateDatabase}>
-          Create Quiz
+      <div style={{ display: "flex", flexDirection: "row", justifyContent:"flex-end" }}>
+        <button className="button-creater" onClick={addQuestion}>
+          Add Question
+        </button>
+        <div>
+          <button className="button-creater" onClick={updateDatabase}>
+            Create
+          </button>
+        </div>
+        <button className="button-creater" onClick={cancelQuiz}>
+          Cancel
         </button>
       </div>
-
-      <br />
-
-      <button className="width-100" onClick={cancelQuiz}>
-        Cancel quiz and return to quiz selection
-      </button>
     </div>
   );
 }

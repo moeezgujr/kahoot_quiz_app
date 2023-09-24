@@ -8,13 +8,17 @@ import HostGame from "./Components/HostGame";
 import Player from "./Components/Player";
 import socketIO from "socket.io-client";
 import QuizResult from "./Components/QuizResult";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 function AppRouter() {
   const socket = socketIO.connect("http://localhost:4000");
 
   return (
     <Router>
+              <ToastContainer />
+
       <Switch>
+
         <Route
           path="/create"
           render={(props) => <Create {...props} socket={socket} />}

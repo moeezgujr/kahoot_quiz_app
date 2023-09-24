@@ -14,6 +14,7 @@ function HostGame({ socket }) {
     attempted: 0,
     isAttempted: false,
   });
+  const [questionResponses, setQuestionResponses] = useState([]);
 
   const { id, nickname } = useParams();
 
@@ -66,21 +67,35 @@ function HostGame({ socket }) {
     const currentQuestion = gameData.questions[currentQuestionIndex];
     const isAnswerCorrect =
       answer === currentQuestion.answers[currentQuestion.correctAnswer - 1];
+
+    // Create a copy of the current responses array and update the response for the current question
+    const updatedResponses = [...questionResponses];
+    updatedResponses[currentQuestionIndex] = {
+      selectedAnswer: answer,
+      isCorrect: isAnswerCorrect,
+    };
+
+    // Update the state with the updated responses
+    setQuestionResponses(updatedResponses);
+
     setSelectedAnswer(answer);
     setIsCorrect(isAnswerCorrect);
   };
+
   const history = useHistory();
   const submitQuestion = () => {
     socket.emit("submitToServer", {
       nickname,
-      isCorrect,
+      responses: questionResponses, // Send all responses to the server
       pin: id,
       id: gameProps[0].id,
     });
     socket.on("submitResponse", (data) => {
       console.log(data);
 
-      history.push("/quizresult/" + gameProps[0].id + "/" + nickname+ "/"+id);
+      history.push(
+        "/quizresult/" + gameProps[0].id + "/" + nickname + "/" + id
+      );
     });
   };
   let link = "";
@@ -143,20 +158,22 @@ function HostGame({ socket }) {
         </div>
 
         <br />
+
         <div className="actions">
-          <button onClick={submitQuestion} id="nextQButton">
-            Submit to Server
-          </button>
-          {/* {gameData.questions.length > 1 && (
+          {/* <p>{JSON.stringify(gameData)}</p> */}
+          {gameData && gameData.questions.length > 1 && (
             <>
-              <button onClick={goToPreviousQuestion} id="prevQButton">
+              <button onClick={goToPreviousQuestion} id="nextQButton">
                 Previous Question
               </button>
               <button onClick={nextQuestion} id="nextQButton">
                 Next Question
               </button>
             </>
-          )} */}
+          )}
+          <button onClick={submitQuestion} id="nextQButton">
+            Submit to Server
+          </button>
         </div>
       </div>
     );

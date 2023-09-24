@@ -4,7 +4,7 @@ import "../Styles/quizresult.css";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 function QuizResult({ socket }) {
   // Sample data for the chart
-  const { id, nickname,pin } = useParams();
+  const { id, nickname, pin } = useParams();
   const [players, setPlayers] = useState({
     data: [],
     score: 0,
@@ -14,11 +14,12 @@ function QuizResult({ socket }) {
     socket.on("fetchPlayers", (data) => {
       console.log(data);
       const playerScores = data?.map((item) => {
+        const _score = JSON.parse(item?.stats || "[]").find(
+          (item) => item.correct && item.gameId == id
+        ).correct;
         return {
           ...item,
-          score:
-            JSON.parse(item?.stats || "[]").filter((item) => item.correct)
-              .length / JSON.parse(item?.stats || "[]")?.length || "0",
+          score: _score.filter((item) => item === true).length / _score.length,
         };
       });
       setPlayers({ ...players, data: playerScores });

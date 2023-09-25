@@ -43,8 +43,12 @@ function AppRouter() {
           path="/player/:id/:nickname"
           render={(props) => <Player {...props} socket={socket} />}
         />
-        <Route
+        {/* <Route
           path="/"
+          render={(props) => <JoinGame {...props} socket={socket} />}
+        /> */}
+         <Route
+          path={["/join/:id",'/']}
           render={(props) => <JoinGame {...props} socket={socket} />}
         />
       </Switch>

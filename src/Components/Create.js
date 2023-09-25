@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "../Styles/create.css"; // Import the CSS file
-import { useHistory, useParams } from "react-router-dom/cjs/react-router-dom.min";
+import {
+  useHistory,
+  useParams,
+} from "react-router-dom/cjs/react-router-dom.min";
 
 function Create({ socket }) {
   const [games, setGames] = useState([]); // State to store the list of games
@@ -9,14 +12,14 @@ function Create({ socket }) {
     socket.on("Games", (data) => {
       console.log(data);
       const data1 = data.map((item) => {
-        return { id: item.id, title: JSON.parse(item.game) };
+        return { id: item.id, title: JSON.parse(item.game), pin: item.pin };
       });
       setGames(data1);
     });
   }, [socket]);
   const history = useHistory();
   const goToPlay = (id) => {
-    history.push("/host-game/" + id);
+    history.push("/join/" + id);
   };
   return (
     <div className="container">
@@ -34,7 +37,7 @@ function Create({ socket }) {
         {games.map((game) => (
           <div key={game.id} className="game-card">
             <h2>{game.title.quizTitle}</h2>
-            <button onClick={() => goToPlay(game.id)}>Select</button>
+            <button onClick={() => goToPlay(game.pin)}>Select</button>
           </div>
         ))}
       </div>
